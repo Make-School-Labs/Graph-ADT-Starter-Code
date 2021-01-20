@@ -1,46 +1,5 @@
 from collections import deque
 
-class Vertex(object):
-    """
-    Defines a single vertex and its neighbors.
-    """
-
-    def __init__(self, vertex_id):
-        """
-        Initialize a vertex and its neighbors dictionary.
-        
-        Parameters:
-        vertex_id (string): A unique identifier to identify this vertex.
-        """
-        self.id = vertex_id
-        self.neighbors_dict = {} # id -> object
-
-    def add_neighbor(self, vertex_obj):
-        """
-        Add a neighbor by storing it in the neighbors dictionary.
-
-        Parameters:
-        vertex_obj (Vertex): An instance of Vertex to be stored as a neighbor.
-        """
-        pass
-
-    def __str__(self):
-        """Output the list of neighbors of this vertex."""
-        neighbor_ids = list(self.neighbors_dict.keys())
-        return f'{self.id} adjacent to {neighbor_ids}'
-
-    def __repr__(self):
-        """Output the list of neighbors of this vertex."""
-        return self.__str__()
-
-    def get_neighbors(self):
-        """Return the neighbors of this vertex."""
-        return list(self.neighbors_dict.values())
-
-    def get_id(self):
-        """Return the id of this vertex."""
-        return self.id
-
 
 class Graph:
     """ Graph Class
@@ -53,55 +12,65 @@ class Graph:
         Parameters:
         is_directed (boolean): Whether the graph is directed (edges go in only one direction).
         """
-        self.vertex_dict = {} # id -> object
+        self.vertex_dict = {} # id -> list of neighbor ids
         self.is_directed = is_directed
 
     def add_vertex(self, vertex_id):
         """
-        Add a new vertex object to the graph with the given key and return the vertex.
+        Add a new vertex object to the graph with the given key.
         
         Parameters:
         vertex_id (string): The unique identifier for the new vertex.
-
-        Returns:
-        Vertex: The new vertex object.
         """
         pass
-        
 
-    def get_vertex(self, vertex_id):
-        """Return the vertex if it exists."""
-        if vertex_id not in self.vertex_dict:
-            return None
-
-        vertex_obj = self.vertex_dict[vertex_id]
-        return vertex_obj
-
-    def add_edge(self, vertex_id1, vertex_id2):
+    def add_edge(self, start_id, end_id):
         """
-        Add an edge from vertex with id `vertex_id1` to vertex with id `vertex_id2`.
+        Add an edge from vertex with id `start_id` to vertex with id `end_id`.
 
         Parameters:
-        vertex_id1 (string): The unique identifier of the first vertex.
-        vertex_id2 (string): The unique identifier of the second vertex.
+        start_id (string): The unique identifier of the first vertex.
+        end_id (string): The unique identifier of the second vertex.
         """
         pass
-        
+
+    def contains_vertex(self, vertex_id):
+        """Return True if the vertex is contained in the graph."""
+        pass
+
+    def contains_edge(self, start_id, end_id):
+        """
+        Return True if the edge is contained in the graph from vertex `start_id`
+        to vertex `end_id`.
+
+        Parameters:
+        start_id (string): The unique identifier of the first vertex.
+        end_id (string): The unique identifier of the second vertex."""
+        pass
+
     def get_vertices(self):
         """
         Return all vertices in the graph.
         
         Returns:
-        List<Vertex>: The vertex objects contained in the graph.
+        list<string>: The vertex ids contained in the graph.
         """
         return list(self.vertex_dict.values())
 
-    def contains_id(self, vertex_id):
-        return vertex_id in self.vertex_dict
+    def get_neighbors(self, start_id):
+        """
+        Return a list of neighbors to the vertex `start_id`.
+
+        Returns:
+        list<string>: The neigbors of the start vertex.
+        """
+        return self.vertex_dict[start_id]
 
     def __str__(self):
         """Return a string representation of the graph."""
-        return f'Graph with vertices: {self.get_vertices()}'
+        graph_repr = [f'{vertex} -> {self.vertex_dict[vertex]}' 
+            for vertex in self.vertex_dict.keys()]
+        return f'Graph with vertices: \n' +'\n'.join(graph_repr)
 
     def __repr__(self):
         """Return a string representation of the graph."""
@@ -111,8 +80,8 @@ class Graph:
         """
         Traverse the graph using breadth-first search.
         """
-        if not self.contains_id(start_id):
-            raise KeyError("One or both vertices are not in the graph!")
+        if start_id not in self.vertex_dict:
+            raise KeyError("The start vertex is not in the graph!")
 
         # Keep a set to denote which vertices we've seen before
         seen = set()
@@ -120,20 +89,19 @@ class Graph:
 
         # Keep a queue so that we visit vertices in the appropriate order
         queue = deque()
-        queue.append(self.get_vertex(start_id))
+        queue.append(start_id)
 
         while queue:
-            current_vertex_obj = queue.popleft()
-            current_vertex_id = current_vertex_obj.get_id()
+            current_vertex_id = queue.popleft()
 
             # Process current node
             print('Processing vertex {}'.format(current_vertex_id))
 
             # Add its neighbors to the queue
-            for neighbor in current_vertex_obj.get_neighbors():
-                if neighbor.get_id() not in seen:
-                    seen.add(neighbor.get_id())
-                    queue.append(neighbor)
+            for neighbor_id in self.get_neighbors(current_vertex_id):
+                if neighbor_id not in seen:
+                    seen.add(neighbor_id)
+                    queue.append(neighbor_id)
 
         return # everything has been processed
 
@@ -148,41 +116,7 @@ class Graph:
         Returns:
         list<string>: A list of all vertex ids in the shortest path, from start to end.
         """
-        if not self.contains_id(start_id) or not self.contains_id(target_id):
-            raise KeyError("One or both vertices are not in the graph!")
-
-        # vertex keys we've seen before and their paths from the start vertex
-        vertex_id_to_path = {
-            start_id: [start_id] # only one thing in the path
-        }
-
-        # queue of vertices to visit next
-        queue = deque() 
-        queue.append(self.get_vertex(start_id))
-
-        # while queue is not empty
-        while queue:
-            current_vertex_obj = queue.pop() # vertex obj to visit next
-            current_vertex_id = current_vertex_obj.get_id()
-
-            # found target, can stop the loop early
-            if current_vertex_id == target_id:
-                break
-
-            neighbors = current_vertex_obj.get_neighbors()
-            for neighbor in neighbors:
-                if neighbor.get_id() not in vertex_id_to_path:
-                    current_path = vertex_id_to_path[current_vertex_id]
-                    # extend the path by 1 vertex
-                    next_path = current_path + [neighbor.get_id()]
-                    vertex_id_to_path[neighbor.get_id()] = next_path
-                    queue.append(neighbor)
-                    # print(vertex_id_to_path)
-
-        if target_id not in vertex_id_to_path: # path not found
-            return None
-
-        return vertex_id_to_path[target_id]
+        pass
 
     def find_vertices_n_away(self, start_id, target_distance):
         """

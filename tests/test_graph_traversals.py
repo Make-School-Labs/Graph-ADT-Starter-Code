@@ -36,10 +36,10 @@ class TestBipartite(unittest.TestCase):
     def test_is_bipartite_tree(self):
         """Test that a tree on 4 vertices is bipartite."""
         graph = Graph(is_directed=False)
-        vertex_a = graph.add_vertex('A')
-        vertex_b = graph.add_vertex('B')
-        vertex_c = graph.add_vertex('C')
-        vertex_d = graph.add_vertex('D')
+        graph.add_vertex('A')
+        graph.add_vertex('B')
+        graph.add_vertex('C')
+        graph.add_vertex('D')
         graph.add_edge('A','B')
         graph.add_edge('A','C')
         graph.add_edge('A','D')
@@ -51,12 +51,12 @@ class TestConnectedComponents(unittest.TestCase):
     def test_get_connected_components(self):
         """Get connected components of a graph."""
         graph = Graph(is_directed=False)
-        vertex_a = graph.add_vertex('A')
-        vertex_b = graph.add_vertex('B')
-        vertex_c = graph.add_vertex('C')
-        vertex_d = graph.add_vertex('D')
-        vertex_d = graph.add_vertex('E')
-        vertex_d = graph.add_vertex('F')
+        graph.add_vertex('A')
+        graph.add_vertex('B')
+        graph.add_vertex('C')
+        graph.add_vertex('D')
+        graph.add_vertex('E')
+        graph.add_vertex('F')
         graph.add_edge('A','B')
         graph.add_edge('A','C')
         graph.add_edge('B','C')
@@ -147,7 +147,7 @@ class TestTopologicalSort(unittest.TestCase):
         topo_sort = graph.topological_sort()
 
         self.assertIn(topo_sort, possible_sorts)
-        
+
 
 if __name__ == '__main__':
     unittest.main()

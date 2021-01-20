@@ -1,6 +1,5 @@
-from graphs.graph import Graph, Vertex
 
-class WeightedVertex(Vertex):
+class WeightedVertex():
     
     def __init__(self, vertex_id):
         """
@@ -48,7 +47,7 @@ class WeightedVertex(Vertex):
         return f'{self.id} adjacent to {neighbor_ids}'
 
 
-class WeightedGraph(Graph):
+class WeightedGraph():
 
     INFINITY = float('inf')
 
@@ -59,7 +58,7 @@ class WeightedGraph(Graph):
         Parameters:
         is_directed (boolean): Whether the graph is directed (edges go in only one direction).
         """
-        self.vertex_dict = {}
+        self.vertex_dict = {} # id -> obj
         self.is_directed = is_directed
 
     def add_vertex(self, vertex_id):
