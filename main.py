@@ -1,6 +1,5 @@
 from graphs.graph import Graph
 from util.file_reader import read_graph_from_file
-# from graphs.weighted_graph import WeightedGraph
 
 
 # Driver code
